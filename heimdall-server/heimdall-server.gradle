@@ -1,0 +1,31 @@
+description "Gateway Server"
+
+mainClassName = 'net.jk.app.heimdallserver.HeimdallServerApplication'
+
+
+dependencies {
+	// Spring Boot
+    compile project(":commons-spring-boot")
+    integTestCompile project(":commons-spring-boot")
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-zuul
+	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-zuul', version: '2.1.1.RELEASE'
+}
+
+
+bootJar {
+    // provide launch script automatically
+    launchScript()
+    // add Actuator /info endpoint with build information
+    buildInfo()
+}
+
+// https://www.vojtechruzicka.com/spring-boot-version/
+springBoot {
+    buildInfo {
+        properties {
+            additional = [
+                    'app.version': getImageVersion()
+            ]
+        }
+    }
+}

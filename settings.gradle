@@ -1,0 +1,18 @@
+rootProject.name = 'voila'
+
+// common libraries
+include 'commons-spring-boot'
+
+// applications
+include 'heimdall-server'
+
+include 'test-server'
+
+include 'eureka-server'
+
+// change naming convention to match gradle build file name with module name
+// see: http://www.developerphil.com/renaming-your-gradle-build-files/
+rootProject.children.each { subproject ->
+    subproject.buildFileName = "${subproject.name}.gradle"
+}
+

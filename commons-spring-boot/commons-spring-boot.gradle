@@ -1,0 +1,29 @@
+description "Common spring boot dependencies"
+
+dependencies {
+
+// Spring Boot Swagger support
+    compile 'io.springfox:springfox-swagger2:2.9.0'
+    compile 'io.springfox:springfox-swagger-ui:2.9.0'
+    
+    // Spring Security for JWT-based authentication
+    //compile("org.springframework.boot:spring-boot-starter-security:$springBootVersion")
+    compile("io.jsonwebtoken:jjwt:0.9.0")
+    
+	compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+	compile("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
+    compile("org.springframework.boot:spring-boot-starter-aop:$springBootVersion")
+    
+    // transactional support
+    compile "org.springframework:spring-tx:$springVersion"
+
+    // Jackson JSON schema support for easier integration
+    compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-client
+	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '2.1.1.RELEASE'
+	
+	compile group: 'com.h2database', name: 'h2', version: '1.4.199'
+	compile "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+    
+}
+
