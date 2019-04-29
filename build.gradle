@@ -255,7 +255,7 @@ configure(subprojects.findAll { it.name.endsWith("-server") }) { project ->
     project.ext {
         configPath = "$projectDir/src/main/deploy/config/"
         dockerContainerName = project.name.replace("-","") + "_${project.name}_1"
-        dockerImageName = project.name.startsWith('jk-') ? project.name : 'jk-' + project.name
+        dockerImageName = project.name.startsWith('voila-') ? project.name : 'voila-' + project.name
         dockerImageBase = "${dockerRegistryUrl}/${dockerImageName}"
 
         dockerRegistryUser = System.getenv("DOCKER_REG_USER") ?: null
@@ -363,7 +363,7 @@ configure(subprojects.findAll { it.name.endsWith("-server") }) { project ->
     task dockerLogin(type: CrossPlatformExec) {
         description "Logs into the docker repository"
         // TODO: handle windows version
-        commandLine "${project.rootDir}/aws-docker-login.sh"
+        //commandLine "${project.rootDir}/aws-docker-login.sh"
     }
 
     dockerPush.dependsOn { tasks.dockerLogin }
@@ -451,12 +451,12 @@ task dockerLogin(type: CrossPlatformExec) {
 def getPgSqlHome() {
     if (Os.isFamily(Os.FAMILY_UNIX)) {
         // ramdisk in Linux, because we can and its 2x faster (or more)
-        return Paths.get("/dev/shm/.jk/pivot/postgresql/data")
+        return Paths.get("/dev/shm/voila.jk/voila/postgresql/data")
     } else if (System.getenv("CODEBUILD_SRC_DIR") != null) {
-        return Paths.get(System.getenv("CODEBUILD_SRC_DIR"), ".jk", "postgresql", "data")
+        return Paths.get(System.getenv("CODEBUILD_SRC_DIR"), "voila.jk", "postgresql", "data")
     } else {
         // folder in user home on other platforms
-        return Paths.get(System.getProperty("user.home"),".jk","pivot","postgresql","data")
+        return Paths.get(System.getProperty("user.home"),"voila.jk","voila","postgresql","data")
     }
 }
 

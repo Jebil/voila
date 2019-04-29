@@ -5,4 +5,6 @@ dependencies {
     compile group: 'com.h2database', name: 'h2', version: '1.4.199'
     testImplementation ':commons-spring-boot'
     integTestCompile project(":commons-spring-boot")
+    
+    docker "net.jk.app:test-server:$version"
 }

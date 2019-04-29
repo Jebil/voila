@@ -1,0 +1,16 @@
+# Basic Docker Compose for running DB
+
+version: '3'
+
+services:
+  jk-postgres-db:
+      # PostgreSQL system DB
+      build: ./docker-cucumber/postgres-init
+      image: 'postgres:voila'
+      container_name: voila-postgres-db
+      ports:
+        - "0.0.0.0:5432:5432"
+      environment:
+        - POSTGRES_PASSWORD=pgpassword
+        - POSTGRES_USER=voila
+        - POSTGRES_DB=voila

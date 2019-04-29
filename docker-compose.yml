@@ -1,0 +1,19 @@
+# Basic Docker Compose for running DB locally during development
+# without need to install it
+
+version: '3'
+services:
+  jk-postgres-db:
+      # PostgreSQL system DB
+      build: ./docker-cucumber/postgres-init
+      image: 'postgres:voila'
+      container_name: voila-postgres-db
+      ports:
+        - "0.0.0.0:5432:5432"
+      volumes:
+        # PGSQL_HOME is passed in from Gradle in .env, dependent on OS for max speed during BDD testing
+        - $PGSQL_HOME:/var/lib/postgresql/data:z
+      environment:
+        - POSTGRES_PASSWORD=pgpassword
+        - POSTGRES_USER=voila
+        - POSTGRES_DB=voila
