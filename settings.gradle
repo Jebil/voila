@@ -2,6 +2,7 @@ rootProject.name = 'voila'
 
 // common libraries
 include 'commons-spring-boot'
+include 'commons-spring-boot-jpa'
 
 // applications
 include 'heimdall-server'

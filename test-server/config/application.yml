@@ -4,6 +4,10 @@ server:
 spring:  
   application:
     name: test-service
+  datasource:
+      url: ${TENANT_DB_URL:jdbc:postgresql://127.0.0.1:5432/modiant-tenant}
+      username: ${TENANT_DB_USER:voila-tenant}
+      password: ${TENANT_DB_PASSWORD:pgpassword}
     
 eureka:  
   client:
@@ -16,3 +20,8 @@ eureka:
 ribbon:
   eureka:
     enabled: true
+   
+voila:
+  security:
+    # the number of log rounds for bcrypt (-1 == strongest; 4 == weakest)
+    bcryptStrength: ${MODIANT_SECURITY_BCRYPT_STRENGTH:-1}
