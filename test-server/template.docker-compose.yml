@@ -18,7 +18,7 @@ services:
   eureka-server:
     # the Gradle Docker Compose plugin will automatically generate docker-compose.yml with
     # the correct tagged version, depending on whichever branch you are on
-    image: "docker.io/jebil/voila-eureka-server:{{net.jk.app:eureka-server}}"
+    image: "docker.io/jebil/voila-eureka-server:{{net.jk.app:test-server}}"
     container_name: voila-eureka-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
@@ -41,7 +41,7 @@ services:
   heimdall-server:
     # the Gradle Docker Compose plugin will automatically generate docker-compose.yml with
     # the correct tagged version, depending on whichever branch you are on
-    image: "docker.io/jebil/voila-heimdall-server:{{net.jk.app:heimdall-server}}"
+    image: "docker.io/jebil/voila-heimdall-server:{{net.jk.app:test-server}}"
     container_name: voila-heimdall-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m

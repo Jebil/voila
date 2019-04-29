@@ -18,7 +18,7 @@ services:
   eureka-server:
     # the Gradle Docker Compose plugin will automatically generate docker-compose.yml with
     # the correct tagged version, depending on whichever branch you are on
-    image: "docker.io/jebil/voila-eureka-server:{{net.jk.app:eureka-server}}"
+    image: "docker.io/jebil/voila-eureka-server:0.0.5-SNAPSHOT"
     container_name: voila-eureka-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
@@ -41,7 +41,7 @@ services:
   heimdall-server:
     # the Gradle Docker Compose plugin will automatically generate docker-compose.yml with
     # the correct tagged version, depending on whichever branch you are on
-    image: "docker.io/jebil/voila-heimdall-server:{{net.jk.app:eureka-server}}"
+    image: "docker.io/jebil/voila-heimdall-server:0.0.5-SNAPSHOT"
     container_name: voila-heimdall-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
@@ -61,3 +61,27 @@ services:
     depends_on:
       - "voila-postgres-db"
       - "eureka-server"
+  test-server:
+    # the Gradle Docker Compose plugin will automatically generate docker-compose.yml with
+    # the correct tagged version, depending on whichever branch you are on
+    image: "docker.io/jebil/voila-test-server:0.0.5-SNAPSHOT"
+    container_name: voila-heimdall-server
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
+      - TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
+      - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
+      - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
+      - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
+      # speed up test runs
+      - voila_SECURITY_BCRYPT_STRENGTH=4
+      # required for CredentialProviderChain
+      - AWS_ACCESS_KEY=access-key
+      - AWS_SECRET_KEY=secret-key
+      - AWS_REGION=local
+    ports:
+      # expose app and admin port
+      - "0.0.0.0:2222:2222"
+    depends_on:
+      - "voila-postgres-db"
+      - "eureka-server"
+      - "heimdall-server"

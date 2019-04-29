@@ -351,7 +351,7 @@ configure(subprojects.findAll { it.name.endsWith("-server") }) { project ->
 
     // explicitly aggregate all the tags to push since the docker gradle plugin can't
     task dockerPushAllTags(type: GradleBuild) {
-        dependsOn(':dockerLogin')
+       // dependsOn(':dockerLogin')
         tasks = getImageTags().collect { "dockerPush${it}".toString() }
     }
 
@@ -360,17 +360,18 @@ configure(subprojects.findAll { it.name.endsWith("-server") }) { project ->
         dockerComposeFile 'docker-compose.yml'
     }
 
-    task dockerLogin(type: CrossPlatformExec) {
-        description "Logs into the docker repository"
+    //task dockerLogin(type: CrossPlatformExec) {
+      //  description "Logs into the docker repository"
         // TODO: handle windows version
         //commandLine "${project.rootDir}/aws-docker-login.sh"
-    }
+    //}
 
-    dockerPush.dependsOn { tasks.dockerLogin }
+    // dockerPush.dependsOn { tasks.dockerLogin }
 
     task dockerUp(type: CrossPlatformExec) {
         description "Runs the Docker Compose application"
-        dependsOn ("generateDockerCompose", "dockerLogin")
+        //dependsOn ("generateDockerCompose", "dockerLogin")
+        dependsOn ("generateDockerCompose")
         workingDir = projectDir
         // build any custom containers before launching
         commandLine "docker-compose","up","-d", "--build"
@@ -441,11 +442,11 @@ configure(subprojects.findAll { it.name.endsWith("-server") }) { project ->
  * COMMON GRADLE TASKS
  */
 
-task dockerLogin(type: CrossPlatformExec) {
-    description "Logs into the docker repository"
+//task dockerLogin(type: CrossPlatformExec) {
+  //  description "Logs into the docker repository"
     // TODO: handle windows version
-    commandLine "${project.rootDir}/aws-docker-login.sh"
-}
+    //commandLine "${project.rootDir}/aws-docker-login.sh"
+//}
 
 
 def getPgSqlHome() {
@@ -497,7 +498,8 @@ task dbDown(type: CrossPlatformExec) {
 
 task allUp(type: CrossPlatformExec) {
     description "Starts detached Docker container with DB (Neo4J) + EDI services, useful when testing from IDE"
-    dependsOn preparePgSqlHome, dockerLogin
+    //dependsOn preparePgSqlHome, dockerLogin
+    dependsOn preparePgSqlHome
     commandLine "docker-compose", "-f", "docker-compose-all.yml", "up", "-d","--build"
     workingDir = rootDir
 }

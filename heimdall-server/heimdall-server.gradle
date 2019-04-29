@@ -31,3 +31,5 @@ springBoot {
         }
     }
 }
+
+compileJava.dependsOn(":eureka-server:compileJava")

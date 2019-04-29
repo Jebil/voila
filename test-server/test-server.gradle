@@ -1,4 +1,5 @@
 
+mainClassName='net.jk.app.testserver.TestServerApplication'
 dependencies {
 // Spring Boot
     compile project(":commons-spring-boot")
