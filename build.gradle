@@ -1,0 +1,512 @@
+
+import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
+import org.apache.tools.ant.taskdefs.condition.Os
+
+import java.nio.file.Files
+import java.nio.file.Paths
+
+/**
+ * COMMON BUILD SETUP
+ */
+plugins {
+    // works for all languages
+    // enables a dump of the task dependency tree
+    id "com.dorongold.task-tree" version "1.3.1" apply true
+    id 'com.github.jlouns.cpe' version '0.5.0' apply true
+    id "org.owasp.dependencycheck" version "5.0.0-M2" apply false
+    id "com.palantir.docker" version "0.19.2" apply false
+    id 'com.palantir.docker-compose' version "0.19.2" apply false
+
+    // Java-specific plugins
+    id 'org.springframework.boot' version "2.1.0.RELEASE" apply false
+    id "io.freefair.lombok" version "3.2.0" apply false
+    id "com.github.sherter.google-java-format" version "0.8" apply false
+    id 'com.jfrog.artifactory' version '4.6.0' apply false
+    id "com.github.spotbugs" version "1.7.1" apply false
+}
+
+// dump all of the codebuild specific environment variables for debugging purposes
+task cloudwatchEnvironment(type: Exec) {
+    description "Print All Codebuild Environment Variables"
+    commandLine 'sh', '-c', 'env | grep CODEBUILD || true'
+}
+
+/**
+ * COMMON SETUP FOR ALL PROJECTS
+ */
+subprojects {
+    apply plugin: 'org.owasp.dependencycheck'
+
+    dependencyCheck {
+        // use CVSS (Common Security Vulnerability Score) to fail build if anything is over 7 (High)
+        // https://www.first.org/cvss/specification-document#5-Qualitative-Severity-Rating-Scale
+        failBuildOnCVSS = 7
+        format = "ALL"
+        outputDirectory = "${projectDir}/build/reports/owasp"
+        suppressionFiles = ["${rootDir}/owasp-suppression.xml"]
+    }
+}
+
+/**
+ * SETUP FOR ALL JAVA PROJECTS
+ */
+configure(subprojects.findAll { !it.name.endsWith("-ui") }) { project ->
+
+    apply plugin: 'java'
+    apply plugin: "com.github.spotbugs" // successor to FindBugs
+    apply plugin: 'maven-publish'
+
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'com.jfrog.artifactory'
+
+    // Java 11
+    sourceCompatibility = 11
+    targetCompatibility = 11
+
+    repositories {
+        // commented out until we have a public DNS name and corresponding signed certificate...
+        // maven { url "https://7864610c-b454-4212-bceb-542064ebf813.cloudapp.net/artifactory/libs" }
+        jcenter()
+    }
+
+    task format(type: GoogleJavaFormat) {
+        source 'src/main'
+        source 'src/test'
+        source 'src/integTest'
+        include '**/*.java'
+    }
+
+    // verify Java code in accordance to Google Java Format
+    // run "./gradlew googleJavaFormat" to auto-format all code
+    compileJava.dependsOn verifyGoogleJavaFormat
+    compileTestJava.dependsOn verifyGoogleJavaFormat
+
+    // enable more detailed reporting of unchecked type and deprecation warnings
+    compileJava {
+      options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+//
+//    /**
+//     * LOMBOK setup
+//     */
+//    lombok { // optional: values below are the defaults
+//      version = "1.18.6"
+//      sha256 = "c5178b18caaa1a15e17b99ba5e4023d2de2ebc18b58cde0f5a04ca4b31c10e6d"
+//    }
+//
+//    task delombok(type: DelombokTask, dependsOn: compileJava) {
+//      ext.outputDir = file("$buildDir/delombok")
+//      outputs.dir(outputDir)
+//      sourceSets.main.java.srcDirs.each {
+//        inputs.dir(it)
+//        args(it, "-d", outputDir)
+//      }
+//    }
+//
+//    javadoc {
+//      dependsOn delombok
+//      source = delombok.outputDir
+//      failOnError = false
+//    }
+
+    // common dependencies
+    dependencies {
+        // common libraries
+        compile 'com.google.guava:guava:24.1-jre'
+        compile 'org.apache.commons:commons-lang3:3.8.1'
+
+        // code quality
+        compile 'com.google.code.findbugs:annotations:3.0.1'
+
+        // unit tests
+        testCompile "junit:junit:$jUnitVersion"
+        testCompile "org.assertj:assertj-core:$assertJVersion"
+
+        // build plugins
+        spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.7.1'
+    }
+
+    spotbugs {
+        toolVersion = '4.0.0-beta1'
+    }
+
+    tasks.withType(com.github.spotbugs.SpotBugsTask) {
+        effort = "max"
+        showProgress = true
+        reportLevel = "high"
+        pluginClasspath = project.configurations.spotbugsPlugins
+
+        reports {
+            xml.enabled false
+            html.enabled true
+        }
+    }
+
+    test {
+        reports {
+            // make sure we generate JUnit XML reports for Jenkins
+            junitXml.enabled = true
+            html.enabled = true
+        }
+    }
+
+    task security {
+        description "Java security scan"
+        dependsOn("spotbugsMain","dependencyCheckAnalyze")
+    }
+
+    spotbugsMain.jvmArgs("-Xmx1G", "-Xms1G")
+    spotbugsMain.jvmArgs("-Xmx1G", "-Xms1G")
+
+    /**
+     * ARTIFACT PUBLISHING
+     */
+    artifactory {
+        contextUrl = 'https://localhost:9443/artifactory'
+        publish {
+            repository {
+                def buildType = version.endsWith('-SNAPSHOT') ? 'snapshot' : 'release'
+                repoKey = "libs-${buildType}-local"
+                def publisherEnv = System.getenv('PUBLISHER')
+                if (publisherEnv == null) {
+                    username = ''
+                    password = ''
+                }
+                else {
+                    def publisherSplit = publisherEnv.split(':')
+                    username = publisherSplit[0]
+                    password = publisherSplit[1]
+                }
+            }
+            defaults {
+                publications 'pubs'
+                publishIvy = false
+            }
+        }
+    }
+
+    publishing {
+        publications {
+            pubs(MavenPublication) {
+                artifact jar
+            }
+        }
+    }
+}
+
+/**
+ * EXTRA SETUP FOR ALL JAVA MICROSERVICE PROJECTS
+ */
+configure(subprojects.findAll { it.name.endsWith("-server") }) { project ->
+
+    apply plugin: 'application'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+
+    apply plugin: "com.palantir.docker"
+    apply plugin: "com.palantir.docker-compose"
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+
+    // Test Structure for BDD integration tests
+    configurations {
+        integTestCompile.extendsFrom testCompile
+        integTestRuntime.extendsFrom testRuntime
+    }
+    
+    // Eclipse won't pick up 'integTest' dependency without below config.
+    eclipse {
+	    classpath {
+	        plusConfigurations.add configurations.integTestCompile
+	        plusConfigurations.add configurations.integTestRuntime
+	    }
+	}
+
+    // https://discuss.gradle.org/t/intellij-dependencies-not-appearing-with-custom-configuration/5757/3
+    idea.module {
+        testSourceDirs += file('src/integTest/java')
+        testResourceDirs += file('src/integTest/resources')
+
+        scopes.TEST.plus += [ configurations.integTestCompile ]
+    }
+
+    sourceSets {
+        integTest {
+            java.srcDir file('src/integTest/java')
+            resources.srcDir file('src/integTest/resources')
+            compileClasspath += sourceSets.main.output + sourceSets.test.output
+            runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+        }
+    }
+
+    dependencies {
+        // integration test setup
+        integTestCompile sourceSets.main.output
+        integTestCompile configurations.testCompile
+        integTestCompile sourceSets.test.output
+        integTestRuntime configurations.testRuntime
+
+        // common Docker dependencies for integration testing
+        // uses the com.palantir.docker-compose plugin
+        docker "net.jk.app:$project.name:$version"
+    }
+
+    project.ext {
+        configPath = "$projectDir/src/main/deploy/config/"
+        dockerContainerName = project.name.replace("-","") + "_${project.name}_1"
+        dockerImageName = project.name.startsWith('voila-') ? project.name : 'voila-' + project.name
+        dockerImageBase = "${dockerRegistryUrl}/${dockerImageName}"
+
+        dockerRegistryUser = System.getenv("DOCKER_REG_USER") ?: null
+        dockerRegistryPass = System.getenv("DOCKER_REG_PASS") ?: null
+
+        getGitBranch = { ->
+            gitBranch = ""
+
+            codeBuildBranch = System.getenv("CODEBUILD_WEBHOOK_TRIGGER") ?: null
+            if (codeBuildBranch != null) {
+                gitBranch = codeBuildBranch.replace("branch/", "")
+            } else {
+                def stdout = new ByteArrayOutputStream()
+                exec {
+                    commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+                    standardOutput = stdout
+                }
+                gitBranch = stdout.toString().trim()
+            }
+            return gitBranch
+        }
+
+        getGitHash = { ->
+            def stdout = new ByteArrayOutputStream()
+            exec {
+                commandLine 'git', 'rev-parse', '--short', 'HEAD'
+                standardOutput = stdout
+            }
+            return stdout.toString().trim()
+        }
+        
+        getImagePrefix = {
+            branch = getGitBranch()
+
+            prefix = ""
+            if(branch == "master") {
+                prefix = "prod"
+            } else if (branch == "develop") {
+                prefix = "dev"
+            } else if (branch.startsWith("hotfix/")) {
+                prefix = "hotfix"
+            } else if (branch.startsWith("release/")) {
+                prefix = "release"
+            } else {
+                prefix = "custom"
+            }
+        }
+
+        getImageVersion = {
+            return getImagePrefix() + "-" + getGitHash()
+        }
+
+        getImageTags = {
+            return [getImageVersion()]
+        }
+    }
+    
+    task pathingJar(type: Jar) {
+        dependsOn configurations.runtime
+        appendix = 'pathing'
+        doFirst {
+             manifest {
+                 attributes "Class-Path": configurations.runtime.files.collect {it.toURL().toString().replaceFirst("file:/", '/')}.join(" ")
+             }
+        }
+     }
+
+    bootRun {
+        dependsOn pathingJar
+        doFirst {
+            classpath = files(sourceSets.main.output.files, pathingJar.archivePath)
+        }
+    }
+
+    /**
+     * BDD integration test support
+     */
+    docker {
+        name "${dockerImageBase}:${project.version}"
+        // build Docker context from these folders
+        files 'build','config', 'docker-entrypoint.sh'
+        tags(*getImageTags())
+        pull true
+        noCache false
+    }
+
+    getTasks().getByName("dockerPrepare").dependsOn("bootJar")
+
+    // convenience task to handle lazy evaluation of dockerTag tasks
+    task dockerBuildWithTags {
+        dependsOn { tasks.dockerTag }
+    }
+
+    // explicitly aggregate all the tags to push since the docker gradle plugin can't
+    task dockerPushAllTags(type: GradleBuild) {
+       // dependsOn(':dockerLogin')
+        tasks = getImageTags().collect { "dockerPush${it}".toString() }
+    }
+
+    dockerCompose {
+        template 'template.docker-compose.yml'
+        dockerComposeFile 'docker-compose.yml'
+    }
+
+    //task dockerLogin(type: CrossPlatformExec) {
+      //  description "Logs into the docker repository"
+        // TODO: handle windows version
+        //commandLine "${project.rootDir}/aws-docker-login.sh"
+    //}
+
+    // dockerPush.dependsOn { tasks.dockerLogin }
+
+    task dockerUp(type: CrossPlatformExec) {
+        description "Runs the Docker Compose application"
+        //dependsOn ("generateDockerCompose", "dockerLogin")
+        dependsOn ("generateDockerCompose")
+        workingDir = projectDir
+        // build any custom containers before launching
+        commandLine "docker-compose","up","-d", "--build"
+    }
+
+    task dockerLogs(type: CrossPlatformExec) {
+        description "Displays the logs of the server Docker container"
+        workingDir = projectDir
+        doFirst {
+            standardOutput = new FileOutputStream("$buildDir/compose-logs.txt")
+        }
+        commandLine "docker-compose", "logs"
+    }
+
+    task dockerDown(type: CrossPlatformExec) {
+        description "Stops the Docker Compose application"
+        dependsOn dockerLogs
+        workingDir = projectDir
+        commandLine "docker-compose","down"
+    }
+
+    task integTest(type: Test) {
+        description "Run Cucumber BDD integration test"
+        dependsOn(":dbDown", ":allDown", "dockerUp")
+        // replaces this value in SQS mock urls with http://localhost:9324
+        environment "AWS_ENDPOINT_REPLACE_URL", "http://jk-elasticmq:9324"
+        testClassesDirs = sourceSets.integTest.output.classesDirs
+        classpath += sourceSets.integTest.runtimeClasspath
+        // ignore external integrations for the base integTest
+        systemProperty "cucumber.options", "--tags 'not @broken' "
+        // make sure to always tear down, regardless if successful or failed
+        finalizedBy dockerDown
+    }
+
+    // dependencies for BDD integration testing
+    build.dependsOn("bootJar", "dockerBuildWithTags", "generateDockerCompose")
+
+    /**
+     * PUBLISHING-RELATED TASKS
+     */
+
+    task configurationZip(type: Zip) {
+        description "Create config.zip with config files"
+
+        // application.yml + shell scripts
+        from("${projectDir}") {
+            include "config/*"
+            include "build/scripts/*"
+        }
+
+        archiveName = "config.zip"
+        destinationDir = file("${projectDir}/build/libs")
+    }
+
+    publishing {
+        publications {
+            pubs(MavenPublication) {
+                artifact bootJar
+                artifact configurationZip {
+                    classifier 'config'
+                }
+            }
+        }
+    }
+}
+
+/**
+ * COMMON GRADLE TASKS
+ */
+
+//task dockerLogin(type: CrossPlatformExec) {
+  //  description "Logs into the docker repository"
+    // TODO: handle windows version
+    //commandLine "${project.rootDir}/aws-docker-login.sh"
+//}
+
+
+def getPgSqlHome() {
+    if (Os.isFamily(Os.FAMILY_UNIX)) {
+        // ramdisk in Linux, because we can and its 2x faster (or more)
+        return Paths.get("/dev/shm/voila.jk/voila/postgresql/data")
+    } else if (System.getenv("CODEBUILD_SRC_DIR") != null) {
+        return Paths.get(System.getenv("CODEBUILD_SRC_DIR"), "voila.jk", "postgresql", "data")
+    } else {
+        // folder in user home on other platforms
+        return Paths.get(System.getProperty("user.home"),"voila.jk","voila","postgresql","data")
+    }
+}
+
+task preparePgSqlHome() {
+    java.nio.file.Path dbPath = getPgSqlHome()
+    Files.createDirectories(dbPath);
+
+    byte[] fileBytes = ("PGSQL_HOME=" + dbPath.toAbsolutePath().toString()).getBytes("UTF-8");
+
+    // prepare .env file for Docker Compose environment variables
+    Files.write(Paths.get(project.rootDir.toString(), ".env"), fileBytes)
+    Files.write(Paths.get(project.rootDir.toString(), "eureka-server",".env"), fileBytes)
+    Files.write(Paths.get(project.rootDir.toString(), "heimdall-server",".env"), fileBytes)
+    Files.write(Paths.get(project.rootDir.toString(), "test-server",".env"), fileBytes)
+}
+
+task(dbDelete) {
+    description "Deletes the DB folder used by Docker containers"
+    doLast {
+        java.nio.file.Path dbPath = getPgSqlHome()
+        Files.deleteIfExists(dbPath)
+        print "Deleted " + dbPath
+    }
+}
+
+task dbUp(type: CrossPlatformExec) {
+    description "Starts detached Docker container with DB, useful when testing from IDE"
+    dependsOn preparePgSqlHome
+    commandLine "docker-compose", "up", "-d"
+    workingDir = rootDir
+}
+
+task dbDown(type: CrossPlatformExec) {
+    description "Stops detached Docker containers with DB"
+    commandLine "docker-compose", "down"
+    workingDir = rootDir
+}
+
+task allUp(type: CrossPlatformExec) {
+    description "Starts detached Docker container with DB (Neo4J) + EDI services, useful when testing from IDE"
+    //dependsOn preparePgSqlHome, dockerLogin
+    dependsOn preparePgSqlHome
+    commandLine "docker-compose", "-f", "docker-compose-all.yml", "up", "-d","--build"
+    workingDir = rootDir
+}
+
+task allDown(type: CrossPlatformExec) {
+    description "Stops detached Docker containers with DB + EDI services"
+    commandLine "docker-compose", "-f", "docker-compose-all.yml", "down", "--remove-orphans"
+    workingDir = rootDir
+}
+ 

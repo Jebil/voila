@@ -1,23 +1,33 @@
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
+/build/
+/.gradle/
+/src/main/resources/assets
+/.idea/
+*.project
+*.classpath
+**/.settings
+**/bin
+/out/
+*.iml
 *.zip
-*.tar.gz
-*.rar
+**/build
+**/out
+/log/
+/classes
+.env
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+/react-ui/.gradle
+/react-ui/node_modules
+/react-ui/coverage
+/react-ui/build
+/react-ui/.DS_Store
+/react-ui/.env.local
+/react-ui/.env.development.local
+/react-ui/.env.test.local
+/react-ui/.env.production.local
+/react-ui/npm-debug.log*
+/react-ui/yarn-debug.log*
+/react-ui/yarn-error.log*
+
+/hs_err_pid*
+/package-log.json
+

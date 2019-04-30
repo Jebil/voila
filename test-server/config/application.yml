@@ -1,0 +1,27 @@
+server:  
+  port: ${PORT:2222}
+
+spring:  
+  application:
+    name: test-service
+  datasource:
+      url: ${TENANT_DB_URL:jdbc:postgresql://127.0.0.1:5432/modiant-tenant}
+      username: ${TENANT_DB_USER:voila-tenant}
+      password: ${TENANT_DB_PASSWORD:pgpassword}
+    
+eureka:  
+  client:
+    serviceUrl:
+      defaultZone: ${DISCOVERY_URL:http://localhost:8761}/eureka
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+      
+ribbon:
+  eureka:
+    enabled: true
+   
+voila:
+  security:
+    # the number of log rounds for bcrypt (-1 == strongest; 4 == weakest)
+    bcryptStrength: ${MODIANT_SECURITY_BCRYPT_STRENGTH:-1}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+
+    <suppress>
+        <notes>Does not apply to Linux-based deployments</notes>
+        <gav regex="true">^com\.apple:AppleJavaExtensions:.*$</gav>
+        <cpe>cpe:/a:apple:java</cpe>
+    </suppress>
+
+    <suppress>
+        <notes>Build-time plugin, not partof the core app</notes>
+        <gav regex="true">^com\.h3xstream\.findsecbugs:findsecbugs-plugin:.*$</gav>
+        <cpe>cpe:/a:mod_security:mod_security</cpe>
+    </suppress>
+
+</suppressions>

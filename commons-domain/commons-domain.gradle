@@ -1,0 +1,5 @@
+
+description "Commons Data Model"
+dependencies {
+	implementation project(":commons-spring-boot-jpa")
+}

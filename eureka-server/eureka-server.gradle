@@ -1,0 +1,33 @@
+description "Service discovery Server"
+
+mainClassName = 'net.jk.app.eurekaserver.EurekaServerApplication'
+
+
+dependencies {
+	// Spring Boot
+	compile project(":commons-spring-boot")
+
+	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-server', version: '2.1.1.RELEASE'
+	compile group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '2.1.2.RELEASE'
+    
+    docker "net.jk.app:eureka-server:$version"
+}
+
+
+bootJar {
+    // provide launch script automatically
+    launchScript()
+    // add Actuator /info endpoint with build information
+    buildInfo()
+}
+
+// https://www.vojtechruzicka.com/spring-boot-version/
+springBoot {
+    buildInfo {
+        properties {
+            additional = [
+                    'app.version': getImageVersion()
+            ]
+        }
+    }
+}
