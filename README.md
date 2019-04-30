@@ -1,9 +1,11 @@
 # voila
+Basic application with micro service architecture built on Spring  cloud and docker
+Heimdall - Gateway service
+Eureka - Service discovery
 
 ## Requirements
 
 * Java OpenJDK 11
-* Node.js 8.4
 
 ## Java
 
