@@ -8,3 +8,21 @@ dependencies {
     
     docker "net.jk.app:test-server:$version"
 }
+
+bootJar {
+    // provide launch script automatically
+    launchScript()
+    // add Actuator /info endpoint with build information
+    buildInfo()
+}
+
+// https://www.vojtechruzicka.com/spring-boot-version/
+springBoot {
+    buildInfo {
+        properties {
+            additional = [
+                    'app.version': getImageVersion()
+            ]
+        }
+    }
+}

@@ -1,4 +1,4 @@
-# Basic Docker Compose for running bff-server connected to DB (Neo4J)
+# Basic Docker Compose for running heimdall-server connected to DB (Neo4J)
 
 version: '3'
 
