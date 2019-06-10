@@ -6,7 +6,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.jk.app.commons.boot.domain.IAuditTrail;
@@ -45,5 +44,4 @@ public class Tenant extends AbstractAuditableEntity implements ITenant, IEntity,
   @Version
   @Column(name = "version")
   private Integer version;
-
 }
