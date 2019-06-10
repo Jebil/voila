@@ -1,5 +1,5 @@
 
 description "Commons Data Model"
 dependencies {
-	implementation project(":commons-spring-boot-jpa")
+	compile project(":commons-spring-boot-jpa")
 }

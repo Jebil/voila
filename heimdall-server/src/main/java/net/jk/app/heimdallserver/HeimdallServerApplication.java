@@ -1,5 +1,6 @@
 package net.jk.app.heimdallserver;
 
+import net.jk.app.CommonDomainConfiguration;
 import net.jk.app.commons.boot.VoilaCommonsSpringBootConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableAsync
 @EnableTransactionManagement
 @EnableZuulProxy
-@Import({VoilaCommonsSpringBootConfiguration.class})
+@Import({VoilaCommonsSpringBootConfiguration.class, CommonDomainConfiguration.class})
 @EnableSwagger2
 @EnableDiscoveryClient
 public class HeimdallServerApplication {

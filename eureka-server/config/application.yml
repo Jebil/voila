@@ -1,20 +1,34 @@
-server:  
-  port: ${PORT:8761}
-    
-eureka:  
-  instance:
-    hostname: localhost
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
-  server:
-    enableSelfPreservation: false 
+server:
+   port: ${PORT:8761}
+eureka:
+   instance:
+      hostname: localhost
+   client:
+      region: default
+      serviceUrl:
+         defaultZone: ${DISCOVERY_URL:http://admin:admin@localhost:8761}/eureka
+      registerWithEureka: false
+      fetchRegistry: false
+   server:
+      enableSelfPreservation: false
+   dashboard:
+      enabled: true
 spring:
+   application:
+      name: Eureka
+   cloud:
+      config:
+         server:
+            native:
+               search-locations: classpath:/shared #tells spring where to locate the config files
    datasource:
-      url: ${TENANT_DB_URL:jdbc:postgresql://127.0.0.1:5432/modiant-tenant}
+      url: ${TENANT_DB_URL:jdbc:postgresql://127.0.0.1:5432/voila-tenant}
       username: ${TENANT_DB_USER:voila-tenant}
       password: ${TENANT_DB_PASSWORD:pgpassword}
+   security:
+      user:
+         name: admin
+         password: admin
 voila:
-  security:
-    # the number of log rounds for bcrypt (-1 == strongest; 4 == weakest)
-    bcryptStrength: ${MODIANT_SECURITY_BCRYPT_STRENGTH:-1}
+   security:
+      bcryptStrength: ${VOILA_SECURITY_BCRYPT_STRENGTH:-1}

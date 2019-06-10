@@ -1,0 +1,8 @@
+spring:
+   profiles:
+      active: native #we are using native because the config server uses a git repo by default
+   cloud:
+      config:
+         server:
+            native:
+               search-locations: classpath:/shared #tells spring where to locate the config files

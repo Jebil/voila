@@ -17,6 +17,8 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
 	compile("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
     compile("org.springframework.boot:spring-boot-starter-aop:$springBootVersion")
+    // Spring Security for JWT-based authentication
+    compile("org.springframework.boot:spring-boot-starter-security:$springBootVersion")
     
     // transactional support
     compile "org.springframework:spring-tx:$springVersion"
@@ -25,5 +27,21 @@ dependencies {
     compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
     // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-client
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '2.1.1.RELEASE'
+	
+	compile 'com.googlecode.libphonenumber:libphonenumber:8.9.10'
+	
+	// enhanced reflections utils
+    compile 'org.azeckoski:reflectutils:0.9.20'
+    
+    // reflections
+    compile 'org.reflections:reflections:0.9.11'
+    
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-config
+	compile 'org.springframework.cloud:spring-cloud-starter-config:2.1.2.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework.retry/spring-retry
+	compile 'org.springframework.retry:spring-retry:1.2.4.RELEASE'
+	
+
 }
 

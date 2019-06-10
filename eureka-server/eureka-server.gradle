@@ -6,10 +6,9 @@ mainClassName = 'net.jk.app.eurekaserver.EurekaServerApplication'
 dependencies {
 	// Spring Boot
 	compile project(":commons-spring-boot")
-
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-server', version: '2.1.1.RELEASE'
-	compile group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '2.1.2.RELEASE'
-    
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '2.1.1.RELEASE'
     docker "net.jk.app:eureka-server:$version"
 }
 

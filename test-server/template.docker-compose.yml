@@ -4,7 +4,6 @@ version: '3'
 
 services:
   voila-postgres-db:
-    # PostgreSQL system DB
     build: ../docker-cucumber/postgres-init
     image: 'postgres:voila'
     container_name: voila-postgres-db
@@ -14,33 +13,26 @@ services:
       - POSTGRES_PASSWORD=pgpassword
       - POSTGRES_USER=voila
       - POSTGRES_DB=voila
-      
+  
   eureka-server:
-    # the Gradle Docker Compose plugin will automatically generate docker-compose.yml with
-    # the correct tagged version, depending on whichever branch you are on
     image: "docker.io/jebil/voila-eureka-server:{{net.jk.app:test-server}}"
     container_name: voila-eureka-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
-      - INTAKE_EDI_FTP_ENABLED=false
       - TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
       - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
       - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
       - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
-      # speed up test runs
+      - DISCOVERY_URL=http://voila-eureka-server:8761/eureka
       - voila_SECURITY_BCRYPT_STRENGTH=4
-      # required for CredentialProviderChain
       - AWS_ACCESS_KEY=access-key
       - AWS_SECRET_KEY=secret-key
       - AWS_REGION=local
     ports:
-      # expose app and admin port
       - "0.0.0.0:8761:8761"
     depends_on:
       - "voila-postgres-db"
   heimdall-server:
-    # the Gradle Docker Compose plugin will automatically generate docker-compose.yml with
-    # the correct tagged version, depending on whichever branch you are on
     image: "docker.io/jebil/voila-heimdall-server:{{net.jk.app:test-server}}"
     container_name: voila-heimdall-server
     environment:
@@ -49,21 +41,19 @@ services:
       - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
       - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
       - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
-      # speed up test runs
+      - CONFIG_SERVER_URL=http://voila-eureka-server:8761
+      - DISCOVERY_URL=http://voila-eureka-server:8761/eureka
       - voila_SECURITY_BCRYPT_STRENGTH=4
-      # required for CredentialProviderChain
       - AWS_ACCESS_KEY=access-key
       - AWS_SECRET_KEY=secret-key
       - AWS_REGION=local
     ports:
-      # expose app and admin port
       - "0.0.0.0:8765:8765"
     depends_on:
       - "voila-postgres-db"
       - "eureka-server"
+      
   test-server:
-    # the Gradle Docker Compose plugin will automatically generate docker-compose.yml with
-    # the correct tagged version, depending on whichever branch you are on
     image: "docker.io/jebil/voila-test-server:{{net.jk.app:test-server}}"
     container_name: voila-test-server
     environment:
@@ -72,14 +62,13 @@ services:
       - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
       - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
       - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
-      # speed up test runs
       - voila_SECURITY_BCRYPT_STRENGTH=4
-      # required for CredentialProviderChain
+      - CONFIG_SERVER_URL=http://voila-eureka-server:8761
       - AWS_ACCESS_KEY=access-key
       - AWS_SECRET_KEY=secret-key
       - AWS_REGION=local
+      - DISCOVERY_URL=http://voila-eureka-server:8761/eureka
     ports:
-      # expose app and admin port
       - "0.0.0.0:2222:2222"
     depends_on:
       - "voila-postgres-db"

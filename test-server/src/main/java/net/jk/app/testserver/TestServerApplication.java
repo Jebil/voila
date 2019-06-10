@@ -1,5 +1,6 @@
 package net.jk.app.testserver;
 
+import net.jk.app.CommonDomainConfiguration;
 import net.jk.app.commons.boot.VoilaCommonsSpringBootConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableSwagger2
-@Import({VoilaCommonsSpringBootConfiguration.class})
+@Import({VoilaCommonsSpringBootConfiguration.class, CommonDomainConfiguration.class})
 public class TestServerApplication {
 
   public static void main(String[] args) {

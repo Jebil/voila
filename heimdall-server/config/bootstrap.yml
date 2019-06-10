@@ -1,0 +1,12 @@
+spring:
+   application:
+      name: heimdall-server
+   cloud:
+      config:
+         enabled: true
+         uri: ${CONFIG_SERVER_URL:http://127.0.0.1:8761} #where the config-service is running
+         fail-fast: true #the service will not run if it can't reach the config-service
+         name: common,heimdall-server
+         retry:
+           max-attempts: 10
+           max-interval: 5000

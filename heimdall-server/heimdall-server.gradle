@@ -8,7 +8,6 @@ dependencies {
     compile project(":commons-spring-boot")
     implementation project(":commons-domain")
     integTestCompile project(":commons-spring-boot")
-    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-zuul
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-zuul', version: '2.1.1.RELEASE'
 	
 	docker "net.jk.app:heimdall-server:$version"

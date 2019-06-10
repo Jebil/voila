@@ -1,0 +1,32 @@
+spring:
+   application:
+      name: heimdall-server
+   jpa:
+      properties:
+         hibernate:
+            jdbc:
+               lob:
+                  non_contextual_creation: true
+   security:
+      user:
+         name: admin
+         password: admin
+server:
+   port: ${PORT:8765}
+endpoints:
+   restart:
+      enabled: true
+   shutdown:
+      enabled: true
+   health:
+      sensitive: false
+   eureka: true
+zuul:
+   prefix: /api
+   routes:
+      test:
+         path: /test/**
+         serviceId: test-service
+eureka:
+   client:
+      registerWithEureka: false

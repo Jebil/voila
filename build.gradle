@@ -497,7 +497,7 @@ task dbDown(type: CrossPlatformExec) {
 }
 
 task allUp(type: CrossPlatformExec) {
-    description "Starts detached Docker container with DB (Neo4J) + EDI services, useful when testing from IDE"
+    description "Starts detached Docker container services, useful when testing from IDE"
     //dependsOn preparePgSqlHome, dockerLogin
     dependsOn preparePgSqlHome
     commandLine "docker-compose", "-f", "docker-compose-all.yml", "up", "-d","--build"

@@ -1,4 +1,4 @@
-# Dockerfile for bff-server
+# Dockerfile for test-server
 
 FROM gcr.io/distroless/java:11
 MAINTAINER Jebil Kuruvila <jebil4u@gmail.com>
@@ -8,10 +8,10 @@ ENV REFRESHED_AT 2019-04-29
 
 # builds from the Docker context created by the Gradle Docker plugin
 COPY libs/test-server-*.jar /opt/jk/test-server.jar
-COPY application.yml /opt/jk/config/application.yml
+COPY bootstrap.yml /opt/jk/config/bootstrap.yml
 
 # expose server ports
-EXPOSE 8080 8081
+EXPOSE 2222 2222
 
 # distroless doesn't have curl so remove this for now
 # define health check for best integration with Docker Compose

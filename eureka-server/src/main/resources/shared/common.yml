@@ -1,0 +1,71 @@
+eureka:
+   client:
+      region: default
+      serviceUrl:
+         defaultZone: ${DISCOVERY_URL:http://admin:admin@localhost:8761}/eureka
+   instance:
+      leaseRenewalIntervalInSeconds: 1
+      leaseExpirationDurationInSeconds: 2
+tenant:
+   datasource:
+      continue-on-error: false
+      jmx-enabled: true
+# Spring Data JPA for common shared system data
+      name: voila-tenant
+      jdbcUrl: ${TENANT_DB_URL:jdbc:postgresql://127.0.0.1:5432/voila-tenant}
+      username: ${TENANT_DB_USER:voila-tenant}
+      password: ${TENANT_DB_PASSWORD:pgpassword}
+   liquibase:
+      change-log: classpath:db/tenant/tenant-changelog.xml
+   replica:
+# read replica for horizontal scalability on reads
+      continue-on-error: false
+      jmx-enabled: true
+      name: replica-voila-tenant
+      jdbcUrl: ${REPLICA_TENANT_DB_URL:jdbc:postgresql://127.0.0.1:5432/voila-tenant}
+      username: ${REPLICA_TENANT_DB_USER:voila-tenant}
+      password: ${REPLICA_TENANT_DB_PASSWORD:pgpassword}
+logging:
+   level:
+      root: ERROR
+      net.jk: INFO
+      org.springframework.web: ERROR
+      org.springframework.security: ERROR
+      org.liquibase: INFO
+# org.hibernate: INFO
+      org.hibernate.SQL: ${HIBERNATE_SQL_LOGGING_LEVEL:ERROR}
+# set to DEBUG to allow viewing sql statements
+# set to TRACE to view parameters injected into sql statements
+      org.hibernate.type.descriptor.sql.BasicBinder: ${HIBERNATE_BINDER_LOGGING_LEVEL:ERROR}
+# set to TRACE to enable verbose logging of transaction and session scope
+      org.hibernate.internal.SessionImpl: ${HIBERNATE_SESSION_LOGGING_LEVEL:ERROR}
+# allows to see all exceptions from app
+      net.jk.app.commons.boot.exception: DEBUG
+# set to DEBUG if you want to see request logging
+      net.jk.app.commons.boot.filter.RequestLoggingFilter: ${REQUEST_LOGGING_LEVEL:ERROR}
+system:
+   datasource:
+      continue-on-error: false
+      jmx-enabled: true
+      name: voila-system
+      jdbcUrl: ${SYSTEM_DB_URL:jdbc:postgresql://127.0.0.1:5432/voila-system}
+      username: ${SYSTEM_DB_USER:voila-system}
+      password: ${SYSTEM_DB_PASSWORD:pgpassword}
+   liquibase:
+      change-log: classpath:db/system/system-changelog.xml
+   replica:
+      continue-on-error: false
+      jmx-enabled: true
+      name: replica-voila-system
+# read replica for horizontal scalability on reads
+      jdbcUrl: ${REPLICA_SYSTEM_DB_URL:jdbc:postgresql://127.0.0.1:5432/voila-system}
+      username: ${REPLICA_SYSTEM_DB_USER:voila-system}
+      password: ${REPLICA_SYSTEM_DB_PASSWORD:pgpassword}
+      
+ribbon:
+   eureka:
+      enabled: true
+voila:
+   security:
+# the number of log rounds for bcrypt (-1 == strongest; 4 == weakest)
+      bcryptStrength: ${VOILA_SECURITY_BCRYPT_STRENGTH:-1}

@@ -1,0 +1,50 @@
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="init" author="jebilkuruvila">
+		<createTable tableName="tenant">
+			<!-- columns -->
+			<column name="tenant_pk_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="public_id" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="tenant_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="logo_url" type="varchar(255)" />
+
+			<column name="created_on" type="TIMESTAMP WITH TIMEZONE"
+				defaultValueComputed="CURRENT_TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+			<column name="created_by" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="modified_on" type="TIMESTAMP WITH TIMEZONE" />
+			<column name="modified_by" type="varchar(50)" />
+		</createTable>
+
+		<!-- index -->
+		<createIndex indexName="idx_tenant__tenant_id"
+			tableName="tenant" unique="true">
+			<column name="tenant_id" />
+		</createIndex>
+
+		<createIndex indexName="idx_tenant__name"
+			tableName="tenant" unique="true">
+			<column name="name" />
+		</createIndex>
+
+		<rollback>
+			<dropTable tableName="tenant" />
+		</rollback>
+	</changeSet>
+</databaseChangeLog>

@@ -2,9 +2,10 @@
 
 dependencies {
 	// Spring Boot
-    implementation project(":commons-spring-boot")
+    compile project(":commons-spring-boot")
     
 	compile "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
 	compile 'org.liquibase:liquibase-core:3.6.2'
 	compile 'org.postgresql:postgresql:42.2.4'
+	compile 'com.vladmihalcea:hibernate-types-52:2.2.3'
 }
