@@ -1,5 +1,7 @@
 
 description "Commons Data Model"
+
+apply plugin: 'java-library'
 dependencies {
-	compile project(":commons-spring-boot-jpa")
+	api project(":commons-spring-boot-jpa")
 }

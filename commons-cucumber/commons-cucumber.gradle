@@ -1,0 +1,34 @@
+
+description "Commons Cucumber"
+
+apply plugin: 'java-library'
+dependencies {
+	api project(":commons-domain")
+    // jackson for JSON support
+    api 'com.fasterxml.jackson.core:jackson-databind:2.10.0.pr1'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0.pr1'
+    api 'org.slf4j:slf4j-api:2.0.0-alpha0'
+    api 'org.glassfish.jersey.core:jersey-client:2.29'
+    api 'org.glassfish.jersey.inject:jersey-hk2:2.29'
+    // JSON path support
+    api 'com.jayway.jsonpath:json-path:2.4.0'
+    // JSON assertion support
+    api 'org.skyscreamer:jsonassert:1.5.0'
+
+    // Amazon SQS support
+    api "com.amazonaws:aws-java-sdk-s3:1.11.601"
+    api "com.amazonaws:aws-java-sdk-sqs:1.11.601"
+
+    // PostgreSQL support
+    api 'org.postgresql:postgresql:42.2.6'
+    
+    api "io.cucumber:cucumber-java:4.7.1"
+    api "io.cucumber:cucumber-junit:4.7.1"
+    
+    api("com.icegreen:greenmail:1.5.8")
+    api 'org.jsoup:jsoup:1.11.3'
+    
+    // Apache PDFBox - Used to read/write PDF files
+    api 'org.apache.pdfbox:pdfbox:2.0.15'
+    api 'org.apache.pdfbox:pdfbox-tools:2.0.15'
+}

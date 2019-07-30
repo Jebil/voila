@@ -1,4 +1,6 @@
 spring:
+   jmx:
+      enabled: false
    profiles:
       active: native #we are using native because the config server uses a git repo by default
    cloud:

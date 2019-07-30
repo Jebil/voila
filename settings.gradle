@@ -4,6 +4,7 @@ rootProject.name = 'voila'
 include 'commons-spring-boot'
 include 'commons-spring-boot-jpa'
 include 'commons-domain'
+include 'commons-cucumber'
 
 // applications
 include 'heimdall-server'

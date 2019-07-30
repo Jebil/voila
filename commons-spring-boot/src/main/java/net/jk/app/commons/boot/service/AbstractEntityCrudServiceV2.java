@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.List;
@@ -271,8 +272,13 @@ public abstract class AbstractEntityCrudServiceV2<E, C, U, ID extends Serializab
   @SuppressFBWarnings("EXS")
   private <T> T constructInstance(Class<T> tClass) {
     try {
-      return tClass.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      return tClass.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException
+        | IllegalAccessException
+        | IllegalArgumentException
+        | InvocationTargetException
+        | NoSuchMethodException
+        | SecurityException e) {
       // should never happens, means default constructor is missing
       throw new ServerRuntimeException(
           "Unable to instantiate object of type " + tClass.getSimpleName(), e);

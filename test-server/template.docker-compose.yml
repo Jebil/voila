@@ -23,7 +23,7 @@ services:
       - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
       - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
       - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
-      - DISCOVERY_URL=http://voila-eureka-server:8761/eureka
+      - DISCOVERY_URL=http://admin:admin@voila-eureka-server:8761/eureka
       - voila_SECURITY_BCRYPT_STRENGTH=4
       - AWS_ACCESS_KEY=access-key
       - AWS_SECRET_KEY=secret-key
@@ -41,8 +41,8 @@ services:
       - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
       - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
       - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
-      - CONFIG_SERVER_URL=http://voila-eureka-server:8761
-      - DISCOVERY_URL=http://voila-eureka-server:8761/eureka
+      - CONFIG_SERVER_URL=http://admin:admin@voila-eureka-server:8761
+      - DISCOVERY_URL=http://admin:admin@voila-eureka-server:8761
       - voila_SECURITY_BCRYPT_STRENGTH=4
       - AWS_ACCESS_KEY=access-key
       - AWS_SECRET_KEY=secret-key
@@ -63,13 +63,13 @@ services:
       - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
       - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
       - voila_SECURITY_BCRYPT_STRENGTH=4
-      - CONFIG_SERVER_URL=http://voila-eureka-server:8761
+      - CONFIG_SERVER_URL=http://admin:admin@voila-eureka-server:8761
       - AWS_ACCESS_KEY=access-key
       - AWS_SECRET_KEY=secret-key
       - AWS_REGION=local
-      - DISCOVERY_URL=http://voila-eureka-server:8761/eureka
-    ports:
-      - "0.0.0.0:2222:2222"
+      - DISCOVERY_URL=http://admin:admin@voila-eureka-server:8761
+    #ports:
+     # - "0.0.0.0:2222:2222"
     depends_on:
       - "voila-postgres-db"
       - "eureka-server"
