@@ -2,10 +2,9 @@
 mainClassName='net.jk.app.testserver.TestServerApplication'
 dependencies {
 // Spring Boot
-    compile project(":commons-spring-boot")
-    compile project(":commons-domain")
+    implementation project(":commons-spring-boot")
+    implementation project(":commons-domain")
     integTestCompile project(":commons-spring-boot")
-    
     docker "net.jk.app:test-server:$version"
 }
 

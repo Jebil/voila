@@ -14,15 +14,16 @@ plugins {
     id "com.dorongold.task-tree" version "1.3.1" apply true
     id 'com.github.jlouns.cpe' version '0.5.0' apply true
     id "org.owasp.dependencycheck" version "5.0.0-M2" apply false
-    id "com.palantir.docker" version "0.19.2" apply false
-    id 'com.palantir.docker-compose' version "0.19.2" apply false
+    id "com.palantir.docker" version "0.22.1" apply false
+    id 'com.palantir.docker-compose' version "0.22.1" apply false
 
     // Java-specific plugins
-    id 'org.springframework.boot' version "2.1.0.RELEASE" apply false
-    id "io.freefair.lombok" version "3.2.0" apply false
+    id 'org.springframework.boot' version '2.1.6.RELEASE' apply false
+    id "io.spring.dependency-management" version "1.0.8.RELEASE" apply false
+    id "io.freefair.lombok" version "3.8.0" apply false
     id "com.github.sherter.google-java-format" version "0.8" apply false
     id 'com.jfrog.artifactory' version '4.6.0' apply false
-    id "com.github.spotbugs" version "1.7.1" apply false
+    id "com.github.spotbugs" version "2.0.0" apply false
 }
 
 // dump all of the codebuild specific environment variables for debugging purposes
@@ -36,7 +37,6 @@ task cloudwatchEnvironment(type: Exec) {
  */
 subprojects {
     apply plugin: 'org.owasp.dependencycheck'
-
     dependencyCheck {
         // use CVSS (Common Security Vulnerability Score) to fail build if anything is over 7 (High)
         // https://www.first.org/cvss/specification-document#5-Qualitative-Severity-Rating-Scale
@@ -55,7 +55,7 @@ configure(subprojects.findAll { !it.name.endsWith("-ui") }) { project ->
     apply plugin: 'java'
     apply plugin: "com.github.spotbugs" // successor to FindBugs
     apply plugin: 'maven-publish'
-
+    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'com.jfrog.artifactory'
@@ -65,8 +65,6 @@ configure(subprojects.findAll { !it.name.endsWith("-ui") }) { project ->
     targetCompatibility = 11
 
     repositories {
-        // commented out until we have a public DNS name and corresponding signed certificate...
-        // maven { url "https://7864610c-b454-4212-bceb-542064ebf813.cloudapp.net/artifactory/libs" }
         jcenter()
     }
 
@@ -76,6 +74,13 @@ configure(subprojects.findAll { !it.name.endsWith("-ui") }) { project ->
         source 'src/integTest'
         include '**/*.java'
     }
+    
+    dependencyManagement {
+	  imports {
+	    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	    mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+	  }
+	}
 
     // verify Java code in accordance to Google Java Format
     // run "./gradlew googleJavaFormat" to auto-format all code

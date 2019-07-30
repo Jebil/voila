@@ -13,12 +13,14 @@ eureka:
       enableSelfPreservation: false
    dashboard:
       enabled: true
+      path: /eurekawebui
 spring:
    application:
       name: Eureka
    cloud:
       config:
          server:
+            prefix: /config
             native:
                search-locations: classpath:/shared #tells spring where to locate the config files
    datasource:
