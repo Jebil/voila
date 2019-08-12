@@ -27,25 +27,8 @@ services:
       - AWS_ACCESS_KEY=access-key
       - AWS_SECRET_KEY=secret-key
       - AWS_REGION=local
+      - DISCOVERY_URL=http://voila-eureka-server:8761/eureka
     ports:
       - "0.0.0.0:8761:8761"
     depends_on:
       - "voila-postgres-db"
-  heimdall-server:
-    image: "docker.io/jebil/voila-heimdall-server:0.0.5-SNAPSHOT"
-    container_name: voila-heimdall-server
-    environment:
-      - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
-      - TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
-      - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
-      - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
-      - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
-      - voila_SECURITY_BCRYPT_STRENGTH=4
-      - AWS_ACCESS_KEY=access-key
-      - AWS_SECRET_KEY=secret-key
-      - AWS_REGION=local
-    ports:
-      - "0.0.0.0:8765:8765"
-    depends_on:
-      - "voila-postgres-db"
-      - "eureka-server"

@@ -3,7 +3,7 @@
 
 version: '3'
 services:
-  jk-postgres-db:
+  voila-postgres-db:
       # PostgreSQL system DB
       build: ./docker-cucumber/postgres-init
       image: 'postgres:voila'
