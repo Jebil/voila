@@ -18,7 +18,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -126,11 +125,12 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(new ErrorSummary(e.getLocalizedMessage()), HttpStatus.UNAUTHORIZED);
   }
 
-  @ExceptionHandler(BadCredentialsException.class)
-  public ResponseEntity<ErrorSummary> handleBadCredentialsException(BadCredentialsException e) {
-    log.warn("{}", e.getMessage(), e);
-    return new ResponseEntity<>(new ErrorSummary(e.getLocalizedMessage()), HttpStatus.UNAUTHORIZED);
-  }
+  //  @ExceptionHandler(BadCredentialsException.class)
+  //  public ResponseEntity<ErrorSummary> handleBadCredentialsException(BadCredentialsException e) {
+  //    log.warn("{}", e.getMessage(), e);
+  //    return new ResponseEntity<>(new ErrorSummary(e.getLocalizedMessage()),
+  // HttpStatus.UNAUTHORIZED);
+  //  }
 
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ErrorSummary> handleAuthenticationException(AuthenticationException e) {
