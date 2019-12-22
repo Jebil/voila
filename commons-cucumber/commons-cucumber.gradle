@@ -20,7 +20,7 @@ dependencies {
     api "com.amazonaws:aws-java-sdk-sqs:1.11.601"
 
     // PostgreSQL support
-    api 'org.postgresql:postgresql:42.2.6'
+    api 'org.postgresql:postgresql:42.2.8'
     
     api "io.cucumber:cucumber-java:4.7.1"
     api "io.cucumber:cucumber-junit:4.7.1"
