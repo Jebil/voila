@@ -367,8 +367,9 @@ configure(subprojects.findAll { it.name.endsWith("-server") }) { project ->
 
     task dockerLogin(type: CrossPlatformExec) {
         description "Logs into the docker repository"
-        // TODO: handle windows version
-        commandLine "${project.rootDir}/aws-docker-login.sh"
+        workingDir "${project.rootDir}"
+        def commands = ['sh','aws-docker-login.sh']
+        commandLine commands
     }
 
     dockerPush.dependsOn { tasks.dockerLogin }
@@ -449,8 +450,9 @@ configure(subprojects.findAll { it.name.endsWith("-server") }) { project ->
 
 task dockerLogin(type: CrossPlatformExec) {
     description "Logs into the docker repository"
-  //   TODO: handle windows version
-    commandLine "${project.rootDir}/aws-docker-login.sh"
+    workingDir "${project.rootDir}"
+    def commands = ['sh','aws-docker-login.sh']
+    commandLine commands
 }
 
 
