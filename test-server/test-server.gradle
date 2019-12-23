@@ -5,6 +5,13 @@ dependencies {
     implementation project(":commons-spring-boot")
     implementation project(":commons-domain")
     integTestCompile project(":commons-spring-boot")
+    
+    // for JUnit tests to access some of the JSON util classes
+    testCompile project(":commons-cucumber")
+
+    // Cucumber BDD integration tests in separate integTest sourceset
+    integTestCompile project(":commons-cucumber")
+    
     docker "net.jk.app:test-server:$version"
 }
 
