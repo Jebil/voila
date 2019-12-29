@@ -7,10 +7,6 @@ spring:
             jdbc:
                lob:
                   non_contextual_creation: true
-   security:
-      user:
-         name: admin
-         password: admin
 server:
    port: ${PORT:8765}
 endpoints:

@@ -2,7 +2,7 @@ eureka:
    client:
       region: default
       serviceUrl:
-         defaultZone: ${DISCOVERY_URL:http://admin:admin@localhost:8761}/eureka
+         defaultZone: ${DISCOVERY_URL:http://localhost:8761}/eureka
    instance:
       leaseRenewalIntervalInSeconds: 1
       leaseExpirationDurationInSeconds: 2

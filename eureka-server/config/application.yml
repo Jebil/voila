@@ -6,7 +6,7 @@ eureka:
    client:
       region: default
       serviceUrl:
-         defaultZone: ${DISCOVERY_URL:http://admin:admin@localhost:8761}/eureka
+         defaultZone: ${DISCOVERY_URL:http://localhost:8761}/eureka
       registerWithEureka: false
       fetchRegistry: false
    server:
@@ -27,10 +27,6 @@ spring:
       url: ${TENANT_DB_URL:jdbc:postgresql://127.0.0.1:5432/voila-tenant}
       username: ${TENANT_DB_USER:voila-tenant}
       password: ${TENANT_DB_PASSWORD:pgpassword}
-   security:
-      user:
-         name: admin
-         password: admin
 voila:
    security:
       bcryptStrength: ${VOILA_SECURITY_BCRYPT_STRENGTH:-1}
