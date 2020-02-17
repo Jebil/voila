@@ -27,6 +27,9 @@ zuul:
       test:
          path: /test/**
          serviceId: test-service
+      video-streamer:
+	     path: /videos/**
+         serviceId: video-streamer
 eureka:
    client:
       registerWithEureka: false

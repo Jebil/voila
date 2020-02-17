@@ -10,6 +10,7 @@ include 'commons-cucumber'
 include 'heimdall-server'
 include 'test-server'
 include 'eureka-server'
+include 'video-streamer'
 
 // change naming convention to match gradle build file name with module name
 // see: http://www.developerphil.com/renaming-your-gradle-build-files/
