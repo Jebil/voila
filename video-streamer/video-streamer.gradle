@@ -1,0 +1,26 @@
+mainClassName='net.jk.app.videostreamer.VideoStreamerApplication'
+configurations {
+  developmentOnly
+  runtimeClasspath {
+    extendsFrom developmentOnly
+  }
+}
+dependencies {
+    docker "net.jk.app:video-streamer:$version"
+	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.google.guava:guava:28.2-jre'
+	implementation 'org.apache.commons:commons-io:1.3.2'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+  	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	testImplementation 'io.projectreactor:reactor-test'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+    bootRun {
+    systemProperties System.properties
+}
