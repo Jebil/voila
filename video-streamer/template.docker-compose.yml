@@ -1,0 +1,53 @@
+# Basic Docker Compose for running video-streamer connected to DB 
+
+version: '3'
+
+services:
+  voila-postgres-db:
+    build: ../docker-cucumber/postgres-init
+    image: 'postgres:voila'
+    container_name: voila-postgres-db
+    ports:
+      - "0.0.0.0:5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=pgpassword
+      - POSTGRES_USER=voila
+      - POSTGRES_DB=voila
+
+  eureka-server:
+    image: "docker.io/jebil/voila-eureka-server:{{net.jk.app:video-streamer}}"
+    container_name: voila-eureka-server
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
+      - TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
+      - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
+      - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
+      - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
+      - DISCOVERY_URL=http://admin:admin@voila-eureka-server:8761/eureka
+      - voila_SECURITY_BCRYPT_STRENGTH=4
+      - AWS_ACCESS_KEY=access-key
+      - AWS_SECRET_KEY=secret-key
+      - AWS_REGION=local
+    ports:
+      - "0.0.0.0:8761:8761"
+    depends_on:
+      - "voila-postgres-db"
+  
+  video-streamer:
+    image: "docker.io/jebil/voila-video-streamer:{{net.jk.app:video-streamer}}"
+    container_name: voila-video-streamer
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
+      - TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
+      - REPLICA_TENANT_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-tenant
+      - SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
+      - REPLICA_SYSTEM_DB_URL=jdbc:postgresql://voila-postgres-db:5432/voila-system
+      - voila_SECURITY_BCRYPT_STRENGTH=4
+      - CONFIG_SERVER_URL=http://admin:admin@voila-eureka-server:8761
+      - AWS_ACCESS_KEY=access-key
+      - AWS_SECRET_KEY=secret-key
+      - AWS_REGION=local
+      - DISCOVERY_URL=http://admin:admin@voila-eureka-server:8761
+    depends_on:
+      - "voila-postgres-db"
+      - "eureka-server"

@@ -3,6 +3,7 @@ package net.jk.app.videostreamer.controller;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
@@ -26,7 +27,7 @@ public class VideoController {
   @GetMapping("/videos/{name}/full")
   public ResponseEntity<UrlResource> getFullVideo(
       @PathVariable String name, @RequestHeader HttpHeaders headers) throws MalformedURLException {
-    UrlResource video = new UrlResource(Paths.get(name).toUri());
+    UrlResource video = new UrlResource(Paths.get(FilenameUtils.getName(name)).toUri());
     return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
         .contentType(
             MediaTypeFactory.getMediaType(video).orElse(MediaType.APPLICATION_OCTET_STREAM))
@@ -36,7 +37,7 @@ public class VideoController {
   @GetMapping("/videos/{name}")
   public ResponseEntity<ResourceRegion> getVideo(
       @PathVariable String name, @RequestHeader HttpHeaders headers) throws IOException {
-    var video = new UrlResource(Paths.get(name).toUri());
+    var video = new UrlResource(Paths.get(FilenameUtils.getName(name)).toUri());
     var region = resourceRegion(video, headers);
     return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
         .contentType(

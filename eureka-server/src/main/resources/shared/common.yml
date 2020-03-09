@@ -6,6 +6,11 @@ eureka:
    instance:
       leaseRenewalIntervalInSeconds: 1
       leaseExpirationDurationInSeconds: 2
+hibernate:
+  session: 
+    events:
+      log: 
+        LOG_QUERIES_SLOWER_THAN_MS: 25
 tenant:
    datasource:
       continue-on-error: false

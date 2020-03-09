@@ -1,6 +1,4 @@
-group = 'net.jk.app'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.11'
+mainClassName='net.jk.app.videostreamer.VideoStreamerApplication'
 configurations {
   developmentOnly
   runtimeClasspath {
