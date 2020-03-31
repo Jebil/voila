@@ -28,7 +28,7 @@ zuul:
          path: /test/**
          serviceId: test-service
       video-streamer:
-	     path: /videos/**
+         path: /videos/**
          serviceId: video-streamer
 eureka:
    client:
