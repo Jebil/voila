@@ -15,7 +15,7 @@ services:
       - POSTGRES_DB=voila
   
   eureka-server:
-    image: "docker.io/jebil/voila-eureka-server:{{net.jk.app:test-server}}"
+    image: "627006115346.dkr.ecr.ap-south-1.amazonaws.com/voila-eureka-server:{{net.jk.app:test-server}}"
     container_name: voila-eureka-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
@@ -33,7 +33,7 @@ services:
     depends_on:
       - "voila-postgres-db"
   heimdall-server:
-    image: "docker.io/jebil/voila-heimdall-server:{{net.jk.app:test-server}}"
+    image: "627006115346.dkr.ecr.ap-south-1.amazonaws.com/voila-heimdall-server:{{net.jk.app:test-server}}"
     container_name: voila-heimdall-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
@@ -54,7 +54,7 @@ services:
       - "eureka-server"
       
   test-server:
-    image: "docker.io/jebil/voila-test-server:{{net.jk.app:test-server}}"
+    image: "627006115346.dkr.ecr.ap-south-1.amazonaws.com/voila-test-server:{{net.jk.app:test-server}}"
     container_name: voila-test-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
