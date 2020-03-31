@@ -15,7 +15,7 @@ services:
       - POSTGRES_DB=voila
       
   eureka-server:
-    image: "docker.io/jebil/voila-eureka-server:{{net.jk.app:eureka-server}}"
+    image: "627006115346.dkr.ecr.ap-south-1.amazonaws.com/voila-eureka-server:{{net.jk.app:eureka-server}}"
     container_name: voila-eureka-server
     environment:
       - JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m
