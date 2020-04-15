@@ -315,7 +315,7 @@ configure(subprojects.findAll { it.name.endsWith("-server") || it.name.equals("v
         }
 
         getImageTags = {
-            return [getImageVersion()]
+            return [getImageVersion(),"latest"]
         }
     }
     
