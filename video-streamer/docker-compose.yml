@@ -1,4 +1,4 @@
-# Basic Docker Compose for running test-server connected to DB 
+# Basic Docker Compose for running video-streamer connected to DB 
 
 version: '3'
 
